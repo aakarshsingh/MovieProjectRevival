@@ -1,6 +1,10 @@
 package dev.aakarsh.movie;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,13 +15,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 @SuppressWarnings("ALL")
-class SeedFromJSON
-{
+class SeedFromJSON {
     /*
     Public TreeSets for the AutoComplete TB and the Range Sliders
      */
@@ -39,35 +38,19 @@ class SeedFromJSON
     public static List indexedRunningTimeList;
     public static List indexedIMDBList;
     public static List indexedRottenList;
-
-    public static int getNumberOfMovies()
-    {
-        return numberOfMovies;
-    }
-
     /*
         Array of Movie Objects
          */
     private static int numberOfMovies;
-
-    static Movie[] getAllTheMovies()
-    {
-        return allTheMovies;
-    }
-
     private static Movie[] allTheMovies;
 
-    SeedFromJSON() throws JSONException
-    {
+    SeedFromJSON() throws JSONException {
         String fileName = "src/main/resources/movieData.json";
-        String content= "";
+        String content = "";
         FileInputStream f = null;
-        try
-        {
+        try {
             content = new Scanner(new File(fileName)).useDelimiter("\\Z").next();
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         JSONArray allJSONData = new JSONObject(content).getJSONArray("movie");
@@ -85,6 +68,76 @@ class SeedFromJSON
         sortedRottenList = getMeAllTheNumbers(allJSONData, "tomatoMeter");
         indexAllMovies(allJSONData);
     }
+
+    public static int getNumberOfMovies() {
+        return numberOfMovies;
+    }
+
+    static Movie[] getAllTheMovies() {
+        return allTheMovies;
+    }
+
+    private static TreeSet getMeAllRunningTimes(JSONArray allJSONData) throws JSONException {
+        Set<Integer> setForRunningTime = new HashSet<Integer>();
+        for (int i = 0; i < allJSONData.length(); i++) {
+            String runTime = allJSONData.getJSONObject(i).getString("Runtime");
+            if (runTime.equals("N/A"))
+                continue;
+            runTime = runTime.replace("min", "").trim();
+            setForRunningTime.add(Integer.parseInt(runTime));
+        }
+        TreeSet sortedRunningList = new TreeSet();
+        sortedRunningList.addAll(setForRunningTime);
+        return sortedRunningList;
+    }
+
+    private static TreeSet getMeAllIMDBRatings(JSONArray allJSONData) throws JSONException {
+        Set<Double> setForIMDB = new HashSet<Double>();
+        for (int i = 0; i < allJSONData.length(); i++) {
+            String rating = allJSONData.getJSONObject(i).getString("imdbRating");
+            if (rating.equals("N/A"))
+                continue;
+            double imdb = Double.parseDouble(rating);
+            setForIMDB.add(imdb);
+        }
+        TreeSet sortedIMDBList = new TreeSet();
+        sortedIMDBList.addAll(setForIMDB);
+        return sortedIMDBList;
+    }
+
+    private static TreeSet getMeAllTheNumbers(JSONArray allJSONData, String key) throws JSONException {
+
+        Set<Integer> setForNumbers = new HashSet<Integer>();
+        for (int i = 0; i < allJSONData.length(); i++) {
+            String number = allJSONData.getJSONObject(i).getString(key);
+            System.out.println(allJSONData.getJSONObject(i).getString("Title"));
+
+            if (number.equals("N/A"))
+                continue;
+            int num = Integer.parseInt(number);
+            setForNumbers.add(num);
+        }
+        TreeSet sortedNumberList = new TreeSet();
+        sortedNumberList.addAll(setForNumbers);
+        return sortedNumberList;
+    }
+
+    private static TreeSet getMeAllSortedNames(JSONArray allJSONData, String key) throws JSONException {
+        Set<String> placeHolderForNames = new HashSet<String>();
+        for (int i = 0; i < allJSONData.length(); i++) {
+            String namesDump = allJSONData.getJSONObject(i).getString(key);
+            String listOfNames[] = namesDump.split(",");
+            for (String name : listOfNames) {
+                if (name.equals("N/A"))
+                    continue;
+                placeHolderForNames.add(name.trim());
+            }
+        }
+        TreeSet sortedNameList = new TreeSet();
+        sortedNameList.addAll(placeHolderForNames);
+        return sortedNameList;
+    }
+
     /*
     1. indexAllLists
     2. PopulateCBs
@@ -93,11 +146,9 @@ class SeedFromJSON
     5. searchInJSON
     6. setUpAJSONSearchSHIT
      */
-    private void indexAllMovies(JSONArray allJSONData) throws JSONException
-    {
+    private void indexAllMovies(JSONArray allJSONData) throws JSONException {
         allTheMovies = new Movie[numberOfMovies];
-        for (int i = 0; i < numberOfMovies; i++)
-        {
+        for (int i = 0; i < numberOfMovies; i++) {
             allTheMovies[i] = new Movie();
             JSONObject jsonObjectIter = allJSONData.getJSONObject(i);
             allTheMovies[i].setTitle(jsonObjectIter.getString("Title"));
@@ -116,75 +167,5 @@ class SeedFromJSON
             allTheMovies[i].setTomatoMeter(jsonObjectIter.getString("tomatoMeter"));
             allTheMovies[i].setTomatoConsensus(jsonObjectIter.getString("tomatoConsensus"));
         }
-    }
-
-    private static TreeSet getMeAllRunningTimes(JSONArray allJSONData) throws JSONException
-    {
-        Set<Integer> setForRunningTime = new HashSet<Integer>();
-        for(int i = 0 ; i < allJSONData.length() ; i++)
-        {
-            String runTime = allJSONData.getJSONObject(i).getString("Runtime");
-            if(runTime.equals("N/A"))
-                continue;
-            runTime = runTime.replace("min","").trim();
-            setForRunningTime.add(Integer.parseInt(runTime));
-        }
-        TreeSet sortedRunningList = new TreeSet();
-        sortedRunningList.addAll(setForRunningTime);
-        return sortedRunningList;
-    }
-
-    private static TreeSet getMeAllIMDBRatings(JSONArray allJSONData) throws JSONException
-    {
-        Set<Double> setForIMDB = new HashSet<Double>();
-        for (int i = 0; i < allJSONData.length(); i++)
-        {
-            String rating = allJSONData.getJSONObject(i).getString("imdbRating");
-            if(rating.equals("N/A"))
-                continue;
-            double imdb = Double.parseDouble(rating);
-            setForIMDB.add(imdb);
-        }
-        TreeSet sortedIMDBList = new TreeSet();
-        sortedIMDBList.addAll(setForIMDB);
-        return sortedIMDBList;
-    }
-
-    private static TreeSet getMeAllTheNumbers(JSONArray allJSONData, String key) throws JSONException
-    {
-
-        Set<Integer> setForNumbers = new HashSet<Integer>();
-        for(int i = 0 ; i < allJSONData.length() ; i++)
-        {
-            String number = allJSONData.getJSONObject(i).getString(key);
-            System.out.println(allJSONData.getJSONObject(i).getString("Title"));
-
-            if(number.equals("N/A"))
-                continue;
-            int num = Integer.parseInt(number);
-            setForNumbers.add(num);
-        }
-        TreeSet sortedNumberList = new TreeSet();
-        sortedNumberList.addAll(setForNumbers);
-        return sortedNumberList;
-    }
-
-    private static TreeSet getMeAllSortedNames(JSONArray allJSONData, String key) throws JSONException
-    {
-        Set<String> placeHolderForNames = new HashSet<String>();
-        for(int i = 0 ; i < allJSONData.length() ; i++)
-        {
-            String namesDump = allJSONData.getJSONObject(i).getString(key);
-            String listOfNames [] = namesDump.split(",");
-            for(String name: listOfNames)
-            {
-                if(name.equals("N/A"))
-                    continue;
-                placeHolderForNames.add(name.trim());
-            }
-        }
-        TreeSet sortedNameList = new TreeSet();
-        sortedNameList.addAll(placeHolderForNames);
-        return sortedNameList;
     }
 }

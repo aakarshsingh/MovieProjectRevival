@@ -3,11 +3,9 @@ package dev.aakarsh.movie;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import net.miginfocom.swing.MigLayout;
+import org.json.JSONException;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -16,21 +14,25 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import net.miginfocom.swing.MigLayout;
-import org.json.JSONException;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Use MigLayout to take it out from the Old Main View to this new one
  * So that there are no issues in rendering of the screen in the JAR
  */
-public class MoviePickerView extends JFrame
-{
-    private JComboBox actorComboBox;
-    private JComboBox directorComboBox;
-    private JComboBox genreComboBox;
+public class MoviePickerView extends JFrame {
+    private final Font FONT = new Font("Cambria", Font.PLAIN, 16);
+    //===== JComboBoxes =================================
+    private JComboBox<String> actorComboBox;
+    private JComboBox<String> directorComboBox;
+    private JComboBox<String> genreComboBox;
 
+    //===== JTextFields =================================
     private JTextField yearMinValue;
     private JTextField yearMaxValue;
     private JTextField runningMinValue;
@@ -40,18 +42,7 @@ public class MoviePickerView extends JFrame
     private JTextField rottenMinValue;
     private JTextField rottenMaxValue;
 
-    private JButton showButton;
-    private JButton yearDownBy1Button;
-    private JButton yearUpBy1Button;
-    private JButton runningDownBy1Button;
-    private JButton runningUpBy1Button;
-    private JButton IMDBDownBy1Button;
-    private JButton IMDBUpBy1Button;
-    private JButton rottenDownBy1Button;
-    private JButton rottenUpBy1Button;
-
-    private JPanel moviePickerPanel;
-
+    //===== JLabels =================================
     private JLabel actorLabel;
     private JLabel directorLabel;
     private JLabel genreLabel;
@@ -60,6 +51,7 @@ public class MoviePickerView extends JFrame
     private JLabel runningLabel;
     private JLabel rottenLabel;
 
+    //===== JSliders =================================
     private JSlider yearMinSlider;
     private JSlider yearMaxSlider;
     private JSlider runningMinSlider;
@@ -69,31 +61,29 @@ public class MoviePickerView extends JFrame
     private JSlider rottenMinSlider;
     private JSlider rottenMaxSlider;
 
+    //===== JButtons =================================
+    private JButton showButton;
     private JButton feelingLuckyButton;
-
+    private JPanel moviePickerPanel;
     private String minimumYearValue;
     private String maximumYearValue;
     private String minimumRunningValue;
     private String maximumRunningValue;
 
-    private final Font FONT = new Font("Cambria", Font.PLAIN, 16);
-
-    MoviePickerView() throws JSONException, InvocationTargetException, InterruptedException
-    {
+    MoviePickerView() throws JSONException, InvocationTargetException, InterruptedException {
 
         new SeedFromJSON();
         initComponents();
     }
 
-    private void initComponents() throws InvocationTargetException, InterruptedException
-    {
+    private void initComponents() throws InvocationTargetException, InterruptedException {
         MigLayout layout = new MigLayout();
         moviePickerPanel = new JPanel(layout);
 
         actorLabel = new JLabel("Actor");
         actorLabel.setFont(FONT);
 
-        actorComboBox = new JComboBox();
+        actorComboBox = new JComboBox<>();
         actorComboBox.setFont(FONT);
         actorComboBox.setEnabled(true);
 
@@ -103,7 +93,7 @@ public class MoviePickerView extends JFrame
         directorLabel = new JLabel("Director");
         directorLabel.setFont(FONT);
 
-        directorComboBox = new JComboBox();
+        directorComboBox = new JComboBox<>();
         directorComboBox.setFont(FONT);
         directorComboBox.setEnabled(true);
 
@@ -113,7 +103,7 @@ public class MoviePickerView extends JFrame
         genreLabel = new JLabel("Genre");
         genreLabel.setFont(FONT);
 
-        genreComboBox = new JComboBox();
+        genreComboBox = new JComboBox<>();
         genreComboBox.setFont(FONT);
         genreComboBox.setEnabled(true);
 
@@ -255,30 +245,22 @@ public class MoviePickerView extends JFrame
         populateUIComponents();
 
         add(moviePickerPanel);
-        setSize(800,800);
+        setSize(850, 850);
         setResizable(false);
         setVisible(true);
     }
 
-    private void populateUIComponents() throws InvocationTargetException, InterruptedException
-    {
+    private void populateUIComponents() throws InvocationTargetException, InterruptedException {
         setupSliderListeners();
         setupButtonListeners();
-        SwingUtilities.invokeAndWait(new Runnable()
-        {
-            public void run()
-            {
-                setupComboBoxes();
-            }
-        });
+        SwingUtilities.invokeAndWait(this::setupComboBoxes);
     }
 
-    private void seedValues()
-    {
-        java.util.List<Integer> listOfYear = new ArrayList<Integer>(SeedFromJSON.sortedYearList);
-        java.util.List<Integer> listOfRunning = new ArrayList<Integer>(SeedFromJSON.sortedRunningTimeList);
-        java.util.List<Integer> listOfRotten = new ArrayList<Integer>(SeedFromJSON.sortedRottenList);
-        java.util.List<Double> listOfIMDB = new ArrayList<Double>(SeedFromJSON.sortedIMDBList);
+    private void seedValues() {
+        List<Integer> listOfYear = new ArrayList<Integer>(SeedFromJSON.sortedYearList);
+        List<Integer> listOfRunning = new ArrayList<Integer>(SeedFromJSON.sortedRunningTimeList);
+        List<Integer> listOfRotten = new ArrayList<Integer>(SeedFromJSON.sortedRottenList);
+        List<Double> listOfIMDB = new ArrayList<Double>(SeedFromJSON.sortedIMDBList);
 
         minimumYearValue = listOfYear.get(0).toString();
         yearMinValue.setText(minimumYearValue);
@@ -292,141 +274,91 @@ public class MoviePickerView extends JFrame
         maximumRunningValue = listOfRunning.get(listOfRunning.size() - 1).toString();
         runningMaxValue.setText(maximumRunningValue);
 
-        String minimumRottenValue = listOfRotten.get(0).toString();
+        final String minimumRottenValue = listOfRotten.get(0).toString();
         rottenMinValue.setText(minimumRottenValue);
 
-        String maximumRottenValue = listOfRotten.get(listOfRotten.size() - 1).toString();
+        final String maximumRottenValue = listOfRotten.get(listOfRotten.size() - 1).toString();
         rottenMaxValue.setText(maximumRottenValue);
 
-        String minimumIMDBValue = listOfIMDB.get(0).toString().substring(0, 1);
+        final String minimumIMDBValue = listOfIMDB.get(0).toString().substring(0, 1);
         IMDBMinValue.setText(minimumIMDBValue);
 
-        String maximumIMDBValue = listOfIMDB.get(listOfIMDB.size() - 1).toString().substring(0, 1);
+        final String maximumIMDBValue = listOfIMDB.get(listOfIMDB.size() - 1).toString().substring(0, 1);
         IMDBMaxValue.setText(maximumIMDBValue);
     }
 
-    private void setupComboBoxes()
-    {
-        @SuppressWarnings("unchecked") java.util.List<String> listOfActors = new ArrayList<String>(
-            SeedFromJSON.sortedActorList);
+    private void setupComboBoxes() {
+        List<String> listOfActors = new ArrayList<String>(SeedFromJSON.sortedActorList);
         final EventList<String> eventListActors = GlazedLists.eventList(listOfActors);
         AutoCompleteSupport.install(actorComboBox, eventListActors);
 
-        java.util.List<String> listOfDirectors = new ArrayList<String>(SeedFromJSON.sortedDirectorList);
+        List<String> listOfDirectors = new ArrayList<String>(SeedFromJSON.sortedDirectorList);
         final EventList<String> eventListDirectors = GlazedLists.eventList(listOfDirectors);
         AutoCompleteSupport.install(directorComboBox, eventListDirectors);
 
-        java.util.List<String> listOfGenre = new ArrayList<String>(SeedFromJSON.sortedGenreList);
+        List<String> listOfGenre = new ArrayList<String>(SeedFromJSON.sortedGenreList);
         final EventList<String> eventListGenre = GlazedLists.eventList(listOfGenre);
         AutoCompleteSupport.install(genreComboBox, eventListGenre);
     }
 
-    private void setupSliderListeners()
-    {
+    private void setupSliderListeners() {
+        //===== Year Sliders =================================
         yearMaxSlider.setMaximum(Integer.parseInt(maximumYearValue));
         yearMaxSlider.setMinimum(Integer.parseInt(minimumYearValue));
         yearMaxSlider.setValue(Integer.parseInt(maximumYearValue));
-        yearMaxSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                yearMaxValue.setText(""+yearMaxSlider.getValue());
-            }
-        });
+        yearMaxSlider.addChangeListener(changeEvent -> yearMaxValue.setText("" + yearMaxSlider.getValue()));
         yearMaxSlider.setMajorTickSpacing(39);
         yearMaxSlider.setPaintLabels(true);
+
         yearMinSlider.setMaximum(Integer.parseInt(maximumYearValue));
         yearMinSlider.setMinimum(Integer.parseInt(minimumYearValue));
         yearMinSlider.setValue(Integer.parseInt(minimumYearValue));
-        yearMinSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                yearMinValue.setText(""+yearMinSlider.getValue());
-            }
-        });
+        yearMinSlider.addChangeListener(changeEvent -> yearMinValue.setText("" + yearMinSlider.getValue()));
         yearMinSlider.setMajorTickSpacing(39);
         yearMinSlider.setPaintLabels(true);
+
+        //===== Running Length Sliders =================================
         runningMaxSlider.setMaximum(Integer.parseInt(maximumRunningValue));
         runningMaxSlider.setMinimum(Integer.parseInt(minimumRunningValue));
         runningMaxSlider.setValue(Integer.parseInt(maximumRunningValue));
-        runningMaxSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                runningMaxValue.setText(""+runningMaxSlider.getValue());
-            }
-        });
+        runningMaxSlider.addChangeListener(changeEvent -> runningMaxValue.setText("" + runningMaxSlider.getValue()));
         runningMaxSlider.setMajorTickSpacing(48);
+
         runningMinSlider.setMaximum(Integer.parseInt(maximumRunningValue));
         runningMinSlider.setMinimum(Integer.parseInt(minimumRunningValue));
         runningMinSlider.setValue(Integer.parseInt(minimumRunningValue));
-        runningMinSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                runningMinValue.setText(""+runningMinSlider.getValue());
-            }
-        });
+        runningMinSlider.addChangeListener(changeEvent -> runningMinValue.setText("" + runningMinSlider.getValue()));
         runningMinSlider.setMajorTickSpacing(48);
+
+        //===== IMDB Rating Sliders =================================
         IMDBMaxSlider.setMaximum(10);
         IMDBMaxSlider.setMinimum(4);
         IMDBMaxSlider.setValue(10);
-        IMDBMaxSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                IMDBMaxValue.setText(""+IMDBMaxSlider.getValue());
-            }
-        });
+        IMDBMaxSlider.addChangeListener(changeEvent -> IMDBMaxValue.setText("" + IMDBMaxSlider.getValue()));
         IMDBMaxSlider.setMajorTickSpacing(1);
+
         IMDBMinSlider.setMaximum(10);
         IMDBMinSlider.setMinimum(4);
         IMDBMinSlider.setValue(4);
-        IMDBMinSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                IMDBMinValue.setText(""+IMDBMinSlider.getValue());
-            }
-        });
+        IMDBMinSlider.addChangeListener(changeEvent -> IMDBMinValue.setText("" + IMDBMinSlider.getValue()));
         IMDBMinSlider.setMajorTickSpacing(1);
+
+        //===== Rotten Sliders =================================
         rottenMaxSlider.setMaximum(100);
         rottenMaxSlider.setMinimum(0);
         rottenMaxSlider.setValue(100);
-        rottenMaxSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                rottenMaxValue.setText(""+rottenMaxSlider.getValue());
-            }
-        });
+        rottenMaxSlider.addChangeListener(changeEvent -> rottenMaxValue.setText("" + rottenMaxSlider.getValue()));
         rottenMaxSlider.setMajorTickSpacing(20);
+
         rottenMinSlider.setMaximum(100);
         rottenMinSlider.setMinimum(0);
         rottenMinSlider.setValue(0);
-        rottenMinSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent)
-            {
-                rottenMinValue.setText(""+rottenMinSlider.getValue());
-            }
-        });
+        rottenMinSlider.addChangeListener(changeEvent -> rottenMinValue.setText("" + rottenMinSlider.getValue()));
         rottenMinSlider.setMajorTickSpacing(20);
     }
 
-    private void setupButtonListeners()
-    {
-        showButton.addActionListener(new ActionListener()
-        {
+    private void setupButtonListeners() {
+        showButton.addActionListener(new ActionListener() {
             int finalMinYear;
             int finalMaxYear;
             int finalMinRunning;
@@ -435,22 +367,20 @@ public class MoviePickerView extends JFrame
             int finalMaxRotten;
             int finalMinIMDB;
             int finalMaxIMDB;
+
             @Override
-            public void actionPerformed(ActionEvent actionEvent)
-            {
+            public void actionPerformed(ActionEvent actionEvent) {
                 SearchFields fields = new SearchFields();
-                if(actorComboBox.getSelectedItem()!=null)
-                {
+                if (actorComboBox.getSelectedItem() != null) {
                     SearchFields.setActor((String) actorComboBox.getSelectedItem());
                 }
-                if(directorComboBox.getSelectedItem()!=null)
-                {
+                if (directorComboBox.getSelectedItem() != null) {
                     SearchFields.setDirector((String) directorComboBox.getSelectedItem());
                 }
-                if(genreComboBox.getSelectedItem()!=null)
-                {
+                if (genreComboBox.getSelectedItem() != null) {
                     SearchFields.setGenre((String) genreComboBox.getSelectedItem());
                 }
+
                 finalMinYear = yearMinSlider.getValue();
                 finalMaxYear = yearMaxSlider.getValue();
                 finalMinRunning = Integer.parseInt(runningMinValue.getText());
@@ -459,10 +389,12 @@ public class MoviePickerView extends JFrame
                 finalMaxRotten = Integer.parseInt(rottenMaxValue.getText());
                 finalMinIMDB = Integer.parseInt(IMDBMinValue.getText());
                 finalMaxIMDB = Integer.parseInt(IMDBMaxValue.getText());
-                fixYearValue(finalMaxYear, finalMinYear);
-                fixRunningValue(finalMaxRunning, finalMinRunning);
+
+                fixYearValue(yearMaxSlider.getValue(), yearMinSlider.getValue());
+                fixRunningValue(Integer.parseInt(runningMaxValue.getText()), Integer.parseInt(runningMinValue.getText()));
                 fixIMDBValue(finalMaxIMDB, finalMinIMDB);
                 fixRottenValue(finalMaxRotten, finalMinRotten);
+
                 SearchFields.setMinYear(finalMinYear);
                 SearchFields.setMaxYear(finalMaxYear);
                 SearchFields.setMinRunning(finalMinRunning);
@@ -471,65 +403,53 @@ public class MoviePickerView extends JFrame
                 SearchFields.setMaxIMDB(finalMaxIMDB);
                 SearchFields.setMinRotten(finalMinRotten);
                 SearchFields.setMaxRotten(finalMaxRotten);
+
                 SearchMovies searchMovies = new SearchMovies(fields, SeedFromJSON.getAllTheMovies());
-                Movie matchedMovies [] = searchMovies.getMatchedMovies();
+                Movie[] matchedMovies = searchMovies.getMatchedMovies();
                 int numberOfMatchedMovies = SearchMovies.getNumberOfMatchedMovies();
                 SearchResultsView resultsView = new SearchResultsView(matchedMovies, numberOfMatchedMovies);
                 resultsView.setVisible(true);
             }
 
-            private void fixRottenValue(int finalMaxRotten, int finalMinRotten)
-            {
-                if(finalMinRotten > finalMaxRotten)
-                {
+            private void fixRottenValue(int finalMaxRotten, int finalMinRotten) {
+                if (finalMinRotten > finalMaxRotten) {
                     finalMinRotten = finalMaxRotten;
-                    rottenMinValue.setText(""+finalMinRotten);
+                    rottenMinValue.setText("" + finalMinRotten);
                     rottenMinSlider.setValue(finalMinRotten);
                 }
             }
 
-            private void fixIMDBValue(int finalMaxIMDB, int finalMinIMDB)
-            {
-                if(finalMinIMDB > finalMaxIMDB)
-                {
+            private void fixIMDBValue(int finalMaxIMDB, int finalMinIMDB) {
+                if (finalMinIMDB > finalMaxIMDB) {
                     finalMinIMDB = finalMaxIMDB;
-                    IMDBMinValue.setText(""+finalMinIMDB);
+                    IMDBMinValue.setText("" + finalMinIMDB);
                     IMDBMinSlider.setValue(finalMinIMDB);
                 }
             }
 
-            private void fixRunningValue(int finalMaxRunning, int finalMinRunning)
-            {
-                if(finalMinRunning > finalMaxRunning)
-                {
+            private void fixRunningValue(int finalMaxRunning, int finalMinRunning) {
+                if (finalMinRunning > finalMaxRunning) {
                     finalMinRunning = finalMaxRunning;
-                    runningMinValue.setText(""+finalMinRunning);
+                    runningMinValue.setText("" + finalMinRunning);
                     runningMinSlider.setValue(finalMinRunning);
                 }
             }
 
-            private void fixYearValue(int finalMaxYear, int finalMinYear)
-            {
-                if(finalMinYear > finalMaxYear)
-                {
+            private void fixYearValue(int finalMaxYear, int finalMinYear) {
+                if (finalMinYear > finalMaxYear) {
                     finalMinYear = finalMaxYear;
-                    yearMinValue.setText(""+finalMinYear);
+                    yearMinValue.setText("" + finalMinYear);
                     yearMinSlider.setValue(finalMinYear);
                 }
             }
         });
-        feelingLuckyButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                int numberOfMovies = SeedFromJSON.getNumberOfMovies();
-                int indexOfInterest = (int)(Math.random() * (numberOfMovies)+1);
-                Movie allTheMovies[] = SeedFromJSON.getAllTheMovies();
-                Movie randomlyPickedMovie[] = {allTheMovies[indexOfInterest]};
-                DetailedResultView resultView = new DetailedResultView(randomlyPickedMovie, 1);
-                resultView.setVisible(true);
-            }
+        feelingLuckyButton.addActionListener(e -> {
+            int numberOfMovies = SeedFromJSON.getNumberOfMovies();
+            int indexOfInterest = (int) (Math.random() * (numberOfMovies) + 1);
+            Movie[] allTheMovies = SeedFromJSON.getAllTheMovies();
+            Movie[] randomlyPickedMovie = {allTheMovies[indexOfInterest]};
+            DetailedResultView resultView = new DetailedResultView(randomlyPickedMovie, 1);
+            resultView.setVisible(true);
         });
     }
 }

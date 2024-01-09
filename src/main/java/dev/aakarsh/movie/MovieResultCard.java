@@ -1,5 +1,8 @@
 package dev.aakarsh.movie;
 
+import lombok.Getter;
+import net.miginfocom.swing.MigLayout;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -9,23 +12,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import net.miginfocom.swing.MigLayout;
 
-public class MovieResultCard
-{
+public class MovieResultCard {
     private final Movie movie;
-    private Container resultCard;
     private final Font FONT = new Font("Cambria", Font.PLAIN, 20);
-    MovieResultCard(Movie movie)
-    {
+    @Getter
+    private Container resultCard;
+
+    MovieResultCard(Movie movie) {
         this.movie = movie;
         initComponents();
     }
 
-    private void initComponents()
-    {
+    private void initComponents() {
         resultCard = new Container();
-        resultCard.setSize(600,400);
+        resultCard.setSize(600, 400);
         resultCard.setLayout(new BorderLayout());
 
         JPanel contentPanel = new JPanel();
@@ -69,7 +70,7 @@ public class MovieResultCard
             plotScrollPane.setVisible(true);
         });
 
-        JLabel ratingsLabel = new JLabel("IMDB Rating: " + movie.getImdbRating()+"/10;  "+"Rotten Tomatoes: " + movie.getTomatoMeter()+ "%");
+        JLabel ratingsLabel = new JLabel("IMDB Rating: " + movie.getImdbRating() + "/10;  " + "Rotten Tomatoes: " + movie.getTomatoMeter() + "%");
         ratingsLabel.setFont(FONT);
         contentPanel.add(ratingsLabel, "wrap");
 
@@ -77,18 +78,13 @@ public class MovieResultCard
         detailsLabel.setFont(FONT);
         contentPanel.add(detailsLabel, "wrap");
 
-        if(!movie.getAwards().equals("N/A"))
-        {
+        if (!movie.getAwards().equals("N/A")) {
             JLabel footerLabel = new JLabel(movie.getAwards());
             footerLabel.setFont(FONT);
             contentPanel.add(footerLabel, "wrap");
         }
 
-        resultCard.add(contentPanel,BorderLayout.CENTER);
+        resultCard.add(contentPanel, BorderLayout.CENTER);
     }
 
-    public Container getResultCard()
-    {
-        return resultCard;
-    }
 }

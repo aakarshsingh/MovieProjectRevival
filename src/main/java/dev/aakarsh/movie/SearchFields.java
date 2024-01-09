@@ -1,129 +1,72 @@
 package dev.aakarsh.movie;
 
-class SearchFields
-{
+import lombok.Getter;
 
+class SearchFields {
+    @Getter
     private static String actor;
+    @Getter
     private static String director;
+    @Getter
     private static String genre;
+    @Getter
     private static int minYear;
+    @Getter
     private static int maxYear;
+    @Getter
     private static int minRunning;
+    @Getter
     private static int maxRunning;
+    @Getter
     private static int minRotten;
+    @Getter
     private static int maxRotten;
+    @Getter
     private static int minIMDB;
+    @Getter
     private static int maxIMDB;
 
-    public static String getActor()
-    {
-        return actor;
-    }
-
-    public static void setActor(String actor)
-    {
+    public static void setActor(String actor) {
         SearchFields.actor = actor;
     }
 
-    public static String getDirector()
-    {
-        return director;
-    }
-
-    public static void setDirector(String director)
-    {
+    public static void setDirector(String director) {
         SearchFields.director = director;
     }
 
-    public static String getGenre()
-    {
-        return genre;
-    }
-
-    public static void setGenre(String genre)
-    {
+    public static void setGenre(String genre) {
         SearchFields.genre = genre;
     }
 
-    public static int getMinYear()
-    {
-        return minYear;
-    }
-
-    public static void setMinYear(int minYear)
-    {
+    public static void setMinYear(int minYear) {
         SearchFields.minYear = minYear;
     }
 
-    public static int getMaxYear()
-    {
-        return maxYear;
-    }
-
-    public static void setMaxYear(int maxYear)
-    {
+    public static void setMaxYear(int maxYear) {
         SearchFields.maxYear = maxYear;
     }
 
-    public static int getMinRunning()
-    {
-        return minRunning;
-    }
-
-    public static void setMinRunning(int minRunning)
-    {
+    public static void setMinRunning(int minRunning) {
         SearchFields.minRunning = minRunning;
     }
 
-    public static int getMaxRunning()
-    {
-        return maxRunning;
-    }
-
-    public static void setMaxRunning(int maxRunning)
-    {
+    public static void setMaxRunning(int maxRunning) {
         SearchFields.maxRunning = maxRunning;
     }
 
-    public static int getMinRotten()
-    {
-        return minRotten;
-    }
-
-    public static void setMinRotten(int minRotten)
-    {
+    public static void setMinRotten(int minRotten) {
         SearchFields.minRotten = minRotten;
     }
 
-    public static int getMaxRotten()
-    {
-        return maxRotten;
-    }
-
-    public static void setMaxRotten(int maxRotten)
-    {
+    public static void setMaxRotten(int maxRotten) {
         SearchFields.maxRotten = maxRotten;
     }
 
-    public static int getMinIMDB()
-    {
-        return minIMDB;
-    }
-
-    public static void setMinIMDB(int minIMDB)
-    {
+    public static void setMinIMDB(int minIMDB) {
         SearchFields.minIMDB = minIMDB;
     }
 
-    public static int getMaxIMDB()
-    {
-        return maxIMDB;
-    }
-
-    public static void setMaxIMDB(int maxIMDB)
-    {
+    public static void setMaxIMDB(int maxIMDB) {
         SearchFields.maxIMDB = maxIMDB;
     }
-
-
 }

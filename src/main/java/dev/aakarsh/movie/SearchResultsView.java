@@ -1,51 +1,36 @@
 package dev.aakarsh.movie;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 
-class SearchResultsView extends JFrame
-{
+class SearchResultsView extends JFrame {
     private final Movie[] matchedMovies;
     private final int numberOfMatchedMovies;
     private Object[][] usableObjectArray;
 
-    SearchResultsView(Movie[] matchedMovies, int numberOfMatchedMovies)
-    {
+    SearchResultsView(Movie[] matchedMovies, int numberOfMatchedMovies) {
         this.matchedMovies = matchedMovies;
         this.numberOfMatchedMovies = numberOfMatchedMovies;
         formatTableElements();
         initComponents();
     }
 
-    private void formatTableElements()
-    {
+    private void formatTableElements() {
         usableObjectArray = new Object[numberOfMatchedMovies][1];
-        for (int i = 0; i < numberOfMatchedMovies; i++)
-        {
+        for (int i = 0; i < numberOfMatchedMovies; i++) {
             String result_title = matchedMovies[i].getTitle();
             String result_consensus = matchedMovies[i].getTomatoConsensus();
             String result_actors = matchedMovies[i].getActors();
             String result_genre = matchedMovies[i].getGenre();
-            String result_final = result_title + " (" +result_genre + ")\n" + (result_consensus.equals("N/A") ? "Starring "+result_actors : result_consensus) + '\n';
+            String result_final = result_title + " (" + result_genre + ")\n" + (result_consensus.equals("N/A") ? "Starring " + result_actors : result_consensus) + '\n';
             usableObjectArray[i][0] = result_final;
         }
     }
 
-    private void initComponents()
-    {
+    private void initComponents() {
         DetailedResultView detailedResultView = new DetailedResultView(matchedMovies, numberOfMatchedMovies);
 
         SearchTableModel tableModel = new SearchTableModel();
@@ -58,14 +43,11 @@ class SearchResultsView extends JFrame
         searchResultsTable.setDefaultRenderer(String.class, new MultiLineTableCellRenderer());
         ListSelectionModel selectionModel = searchResultsTable.getSelectionModel();
         selectionModel.addListSelectionListener(e -> {
-            if(!e.getValueIsAdjusting())
-            {
-                if (searchResultsTable.getSelectedRow() > -1 && searchResultsTable.getSelectedColumn() == 0)
-                {
+            if (!e.getValueIsAdjusting()) {
+                if (searchResultsTable.getSelectedRow() > -1 && searchResultsTable.getSelectedColumn() == 0) {
                     detailedResultView.setCurrentCardIndex(searchResultsTable.getSelectedRow());
                     detailedResultView.showSpecificCard();
-                    if(!detailedResultView.isVisible())
-                    {
+                    if (!detailedResultView.isVisible()) {
                         detailedResultView.setVisible(true);
                     }
                 }
@@ -84,34 +66,28 @@ class SearchResultsView extends JFrame
     }
 }
 
-class SearchTableModel extends DefaultTableModel
-{
+class SearchTableModel extends DefaultTableModel {
 
     @Override
-    public int getColumnCount()
-    {
+    public int getColumnCount() {
         return 1;
     }
 
     @Override
-    public Class getColumnClass(int columnIndex)
-    {
+    public Class getColumnClass(int columnIndex) {
         return String.class;
     }
 
 
     @Override
-    public boolean isCellEditable(int row, int col)
-    {
+    public boolean isCellEditable(int row, int col) {
         return false;
     }
 }
 
-class MultiLineTableCellRenderer extends JTextArea implements TableCellRenderer
-{
+class MultiLineTableCellRenderer extends JTextArea implements TableCellRenderer {
 
-    MultiLineTableCellRenderer()
-    {
+    MultiLineTableCellRenderer() {
         setLineWrap(true);
         setWrapStyleWord(true);
         setOpaque(true);
@@ -119,34 +95,25 @@ class MultiLineTableCellRenderer extends JTextArea implements TableCellRenderer
 
     public Component getTableCellRendererComponent(
             JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column)
-    {
-        if (isSelected)
-        {
+            int row, int column) {
+        if (isSelected) {
             setForeground(table.getSelectionForeground());
             setBackground(table.getSelectionBackground());
-        }
-        else
-        {
+        } else {
             setForeground(table.getForeground());
             setBackground(table.getBackground());
         }
         setFont(table.getFont());
-        if (hasFocus)
-        {
+        if (hasFocus) {
             setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
-            if (table.isCellEditable(row, column))
-            {
+            if (table.isCellEditable(row, column)) {
                 setForeground(UIManager.getColor("Table.focusCellForeground"));
                 setBackground(UIManager.getColor("Table.focusCellBackground"));
             }
         }
-        if (value != null)
-        {
+        if (value != null) {
             setText(value.toString());
-        }
-        else
-        {
+        } else {
             setText("");
         }
         setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
